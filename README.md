@@ -1,12 +1,12 @@
 # Maven Flow Merge
 
-A GitHub action for merging Maven projects developed according to [GIT Flow](https://nvie.com/posts/a-successful-git-branching-model/). It's aim is to automatically resolve GIT merge conflicts in changelog files and Maven project files (`pom.xml`) which arise when using this approach.
+A GitHub action for merging Maven projects developed according to [Git Flow]([https://nvie.com/posts/a-successful-git-branching-model/](https://nvie.com/posts/a-successful-git-branching-model/)). It's aim is to automatically resolve Git merge conflicts in changelog files and Maven project files (`pom.xml`) which arise when using this approach.
 
 ## The Problem With Merging Changelogs And POM Files
 
 Let's imagine a model situation:
 
-- You have a Maven project which uses GIT Flow.
+- You have a Maven project which uses Git Flow.
 
 - The project has a `develop` branch, which contains version `1.0.0-SNAPSHOT`.
 
@@ -28,7 +28,7 @@ Let's imagine a model situation:
 
 ## How Changelogs Are Merged
 
-This action uses a special [GIT merge driver for changelogs](https://github.com/maven-flow/changelog-merge-driver) which parses the changelog files and merges them in a logical way taking into account their structure.
+This action uses a special [Git merge driver for changelogs](https://github.com/maven-flow/changelog-merge-driver) which parses the changelog files and merges them in a logical way taking into account their structure.
 
 - The changelog file needs to follow the structure defined in [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
@@ -36,11 +36,11 @@ This action uses a special [GIT merge driver for changelogs](https://github.com/
 
 ## How POM Files Are Merged
 
-This action also uses a special GIT merge driver for Maven project files (`pom.xml`).
+This action also uses a special Git merge driver for Maven project files (`pom.xml`).
 
-If a version conflict is detected, the version in `ours` is temporarily changed to the version from`theirs`, and a standard GIT merge is performed by calling `git merge-file`. After the merge, the version in `ours` is changed back into the original value.
+If a version conflict is detected, the version in `ours` is temporarily changed to the version from`theirs`, and a standard Git merge is performed by calling `git merge-file`. After the merge, the version in `ours` is changed back into the original value.
 
-It is essentially the same as in this [stackoverflow answer](https://stackoverflow.com/a/33181239/2468620), except that no additional commits are made. The GIT history will remain clean and contain only the merge commit.
+It is essentially the same as in this [stackoverflow answer](https://stackoverflow.com/a/33181239/2468620), except that no additional commits are made. The Git history will remain clean and contain only the merge commit.
 
 NOTE: There can still be conflicts in other parts of the `pom.xml` file.
 
@@ -50,9 +50,9 @@ This merge driver works also for multi-module Maven projects, even in cases when
 
 Preconditions:
 
-- The GIT repository needs to be checked-out with full history, otherwise you will get an "unrelated histories" error message upon merge. To checkout the full history, call action `actions/checkout` with attribute `fetch-depth: 0`. See example workflow below.
+- The Git repository needs to be checked-out with full history, otherwise you will get an "unrelated histories" error message upon merge. To checkout the full history, call action `actions/checkout` with attribute `fetch-depth: 0`. See example workflow below.
 
-- The `GITHUB_TOKEN` (which is used by default in `actions/checkout`) needs to have write permission for scope `contents`, otherwise the merge cannot be pushed.
+- The `GitHUB_TOKEN` (which is used by default in `actions/checkout`) needs to have write permission for scope `contents`, otherwise the merge cannot be pushed.
   See [GitHub documentation](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token) and example workflow below.
 
 - To merge POM files, the merge job needs run on a Linux-based runner (the pom merge driver is a bash script).
@@ -96,12 +96,12 @@ jobs:
     if: startsWith(github.ref, 'refs/heads/release') # only run merge on release branches
     runs-on: ubuntu-latest
     permissions:
-      contents: write                   # write permission needed to enable GIT push after merge
+      contents: write                   # write permission needed to enable Git push after merge
     steps:
 
     - uses: actions/checkout@v4
       with:
-        fetch-depth: 0                  # the full GIT history needs to be checked out
+        fetch-depth: 0                  # the full Git history needs to be checked out
 
     - name: Set up JDK 17               # Java >= 17 is needed to run the changelog merge driver
       uses: actions/setup-java@v4
@@ -152,7 +152,7 @@ jobs:
 
 ## Disabling Custom Merge Drivers
 
-If you want to disable custom merge behavior for changelogs or POM files (or both) and perform a standard GIT merge instead, simply set the value of attribute `changelog-file` or `pom-file` to something that will not match any existing file in your repository.
+If you want to disable custom merge behavior for changelogs or POM files (or both) and perform a standard Git merge instead, simply set the value of attribute `changelog-file` or `pom-file` to something that will not match any existing file in your repository.
 
 For example:
 
